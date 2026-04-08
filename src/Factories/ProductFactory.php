@@ -10,11 +10,8 @@ class ProductFactory {
         'clothes' => ClothesProduct::class,
     ];
 
-  public static function create(?string $category, array $data) {
-    // თუ კატეგორია NULL-ია ან არ არის მეპინგში, ვიყენებთ 'clothes'-ს როგორც დეფოლტს
-    $categoryKey = strtolower($category ?? 'clothes');
-    
-    $className = self::$classMap[$categoryKey] ?? ClothesProduct::class;
-    return new $className($data);
+    public static function create(string $category, array $data) {
+        $className = self::$classMap[$category] ?? TechProduct::class;
+        return new $className($data);
     }
 }
