@@ -1,1 +1,1 @@
-web: composer dump-autoload -o && php -S 0.0.0.0:$PORT -t public/
+web: php -S 0.0.0.0:$PORT -t public/
