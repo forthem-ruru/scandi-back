@@ -9,17 +9,17 @@ class GraphQL {
         
         // 1. CORS Header-ები - აუცილებელია ფრონტენდთან კავშირისთვის
         // ნება დართე ნებისმიერ დომენს (შეგიძლია შეცვალო შენი კონკრეტული URL-ით)
-        header("Access-Control-Allow-Origin: *"); 
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-        header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-        header('Content-Type: application/json; charset=UTF-8');
+     header("Access-Control-Allow-Origin: *"); 
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    
+    // 2. Preflight მოთხოვნის (OPTIONS) დახურვა
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit; 
+    }
 
-        // 2. Preflight მოთხოვნის (OPTIONS) დამუშავება
-        // ბრაუზერი ჯერ ამას აგზავნის, რომ შეამოწმოს სერვერის ნებართვა
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            http_response_code(200);
-            exit; // ძალიან მნიშვნელოვანია: აქ წყდება PHP-ს მუშაობა
-        }
+    header('Content-Type: application/json; charset=UTF-8');
 
         try {
             // 3. შემოსული მონაცემების წაკითხვა
