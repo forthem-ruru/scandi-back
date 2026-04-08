@@ -9,33 +9,28 @@ class Database {
     private static $instance = null;
 
 
-    public static function getConnection() {
-        if (self::$instance === null) {
-     
-            $host = getenv('MYSQLHOST') ?: '127.0.0.1';
-            $port = getenv('MYSQLPORT') ?: '3306';
-            $db   = getenv('MYSQLDATABASE') ?: 'railway';
-            $user = getenv('MYSQLUSER') ?: 'root';
-            $pass = getenv('MYSQLPASSWORD') ?: '';
-            $charset = 'utf8mb4';
+   public static function getConnection() {
+    if (self::$instance === null) {
+        // შენი სურათიდან აღებული ზუსტი საჯარო მონაცემები
+        $host = 'mainline.proxy.rlwy.net'; 
+        $port = '26345'; // საჯარო პორტი შენი სურათიდან
+        $db   = 'railway';
+        $user = 'root';
+        $pass = 'hygdLHxOkCDMprCIZjbLigifUBPGkThE'; 
+        $charset = 'utf8mb4';
 
-     
-            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
-            
-            $options = [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       
-                PDO::ATTR_EMULATE_PREPARES   => false,                  
-            ];
-
-            try {
-                self::$instance = new PDO($dsn, $user, $pass, $options);
-            } catch (PDOException $e) {
-               
-                throw new PDOException("ბაზასთან კავშირი ვერ დამყარდა: " . $e->getMessage(), (int)$e->getCode());
-            }
+        $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
+        
+        try {
+            self::$instance = new PDO($dsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (\PDOException $e) {
+            throw new \PDOException("ბაზასთან კავშირი ვერ დამყარდა: " . $e->getMessage());
         }
-
-        return self::$instance;
     }
+    return self::$instance;
+}
 }
