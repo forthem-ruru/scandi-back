@@ -3,31 +3,39 @@
 namespace App;
 
 use PDO;
-use Dotenv\Dotenv;
+use PDOException;
 
 class Database {
     private static $instance = null;
-    private $connection;
-
-
-    private function __construct() {
-      $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-        $dotenv->load();
-
-        $host = $_ENV['DB_HOST'];
-        $db   = $_ENV['DB_NAME'];
-        $user = $_ENV['DB_USER'];
-        $pass = $_ENV['DB_PASS'];
-
-        $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
-        $this->connection = new PDO($dsn, $user, $pass);
-    }
 
 
     public static function getConnection() {
         if (self::$instance === null) {
-            self::$instance = new self();
+     
+            $host = getenv('MYSQLHOST') ?: '127.0.0.1';
+            $port = getenv('MYSQLPORT') ?: '3306';
+            $db   = getenv('MYSQLDATABASE') ?: 'railway';
+            $user = getenv('MYSQLUSER') ?: 'root';
+            $pass = getenv('MYSQLPASSWORD') ?: '';
+            $charset = 'utf8mb4';
+
+     
+            $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
+            
+            $options = [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       
+                PDO::ATTR_EMULATE_PREPARES   => false,                  
+            ];
+
+            try {
+                self::$instance = new PDO($dsn, $user, $pass, $options);
+            } catch (PDOException $e) {
+               
+                throw new PDOException("ბაზასთან კავშირი ვერ დამყარდა: " . $e->getMessage(), (int)$e->getCode());
+            }
         }
-        return self::$instance->connection;
+
+        return self::$instance;
     }
 }
