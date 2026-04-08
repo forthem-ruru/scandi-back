@@ -1,9 +1,9 @@
 <?php
+
 namespace App\GraphQL\Types;
 
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\ObjectType;
-
 use App\GraphQL\Types\PriceType;
 use App\GraphQL\Types\AttributeType;
 
@@ -32,6 +32,11 @@ class ProductType extends ObjectType {
                     'type' => Type::boolean(),
                     'resolve' => fn($product) => (bool)$product->getInStock()
                 ],
+                // აი აქ დაემატა category ველი
+                'category' => [
+                    'type' => Type::string(),
+                    'resolve' => fn($product) => $product->getCategory()
+                ],
                 'prices' => [
                     'type' => Type::listOf(new PriceType()),
                     'resolve' => fn($product) => $product->getPrices() 
@@ -41,10 +46,12 @@ class ProductType extends ObjectType {
                     'resolve' => fn($product) => $product->getAttributes()
                 ],
                 'gallery' => [
-    'type' => Type::listOf(Type::string()),
-    'resolve' => fn($product) => $product->getGallery() 
-],
+                    'type' => Type::listOf(Type::string()),
+                    'resolve' => fn($product) => $product->getGallery() 
+                ],
             ]
         ]);
     }
 }
+
+//დაემატააა
