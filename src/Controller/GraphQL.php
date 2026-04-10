@@ -6,19 +6,18 @@ use GraphQL\GraphQL as GraphQLBase;
 
 class GraphQL {
     public static function handle() {
-  
-        header("Access-Control-Allow-Origin: http://localhost:5173"); 
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        // ნება დართე ნებისმიერ Origin-ს (CORS Fix)
+        header("Access-Control-Allow-Origin: *"); 
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
         header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
         header('Content-Type: application/json; charset=UTF-8');
 
-      
+        // OPTIONS მოთხოვნის დამუშავება
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             http_response_code(200);
-            return ''; 
+            exit; // დაუყოვნებლივ შეწყვიტე მუშაობა
         }
 
-       
         try {
             $rawInput = file_get_contents('php://input');
             $input = json_decode($rawInput, true);
@@ -27,6 +26,10 @@ class GraphQL {
             $variables = $input['variables'] ?? null;
 
             if (!$query) {
+                // თუ ვინმე ბრაუზერიდან უბრალოდ გახსნის ლინკს
+                if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                    return json_encode(['message' => 'GraphQL API is running...']);
+                }
                 throw new \Exception("No query provided.");
             }
 
